@@ -12,9 +12,16 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="index.js"></script>
     <link rel="shortcut icon" href="">
-
 </head>
+<style>
+    body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
+</style>
 <body>
     <h1>Search/Selection</h1>
     <h2>Search for Unicorn by Name</h2>
@@ -39,22 +46,24 @@
             <input type="checkbox" id="appleCheckbox" value="apple" style="vertical-align: middle;">
             <label for="carrotCheckbox" style="display: inline-block; vertical-align: middle;">Carrot</label>
             <input type="checkbox" id="carrotCheckbox" value="carrot" style="vertical-align: middle;">
-            <button id="foodSearchButton">submit</button>
         </div>
-        <hr>
-        <h1>Filter/Projection</h1>
+        <button id="foodSearchButton">submit</button>
+    </div>
+    <hr>
+    <h2>Filter/Projection</h2>
+    <div>
+        <label>Filter by:</label>
         <div>
-            <label>Filter by:</label>
-            <div>
-                <label for="nameFilterCheckbox" style="display: inline-block; vertical-align: middle;">Name</label>
-                <input type="checkbox" id="nameFilterCheckbox" value="apple" style="vertical-align: middle;">
-                <label for="weightfilterCheckbox" style="display: inline-block; vertical-align: middle;">Weight</label>
-                <input type="checkbox" id="weightfilterCheckbox" value="weight" style="vertical-align: middle;">
-                <button id="filterButton">submit</button>
-            </div>
-            <hr>
-            <h1>Results</h1>
-            <div id="searchResults"></div>
+            <label for="nameFilterCheckbox" style="display: inline-block; vertical-align: middle;">Name</label>
+            <input type="checkbox" id="nameFilterCheckbox" value="apple" style="vertical-align: middle;">
+            <label for="weightfilterCheckbox" style="display: inline-block; vertical-align: middle;">Weight</label>
+            <input type="checkbox" id="weightFilterCheckbox" value="weight" style="vertical-align: middle;">
+        </div>
+        <button id="filterButton">submit</button>
+    </div>
+    <hr>
+    <h1>Results</h1>
+    <div id="searchResults"></div>
 </body>
 
 </html>

@@ -1,88 +1,109 @@
-$(document).ready(function() {
-    // Search by unicorn name
-    $('#nameSearchButton').click(function() {
-      var name = $('#nameInput').val();
-      var query = { name: name };
-      axios.post('http://localhost:3000/search', query)
-        .then(function(response) {
-          displaySearchResults(response.data);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+console.log('setup');
+const setup = async () => {
+    let filter = {
+        name: false,
+        weight: false
+    };
+
+    // Event listener for the filter button
+    $('#filterButton').click(async () => {
+        // Check which checkboxes are checked
+        const nameChecked = $('#nameFilterCheckbox').is(':checked');
+        const weightChecked = $('#weightFilterCheckbox').is(':checked');
+
+        // Update the filter object based on the checkboxes
+        if (nameChecked && weightChecked) {
+            filter = {
+                name: true,
+                weight: true
+            };
+        } else if (nameChecked) {
+            filter = {
+                name: true,
+                weight: false
+            };
+        } else if (weightChecked) {
+            filter = {
+                name: false,
+                weight: true
+            };
+        }
+        else {
+            filter = {
+                name: false,
+                weight: false
+            };
+        // Log the filter object for testing purposes
+        console.log(filter);
+        }
     });
-  
-    // Search by unicorn weight
-    $('#weightSearchButton').click(function() {
-      var lowerLimit = $('#lowerLimitInput').val();
-      var higherLimit = $('#higherLimitInput').val();
-      var query = { weight: { $gte: lowerLimit, $lte: higherLimit } };
-      axios.post('http://localhost:3000/search', query)
-        .then(function(response) {
-          displaySearchResults(response.data);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+
+    $('#nameSearchButton').click(async () => {
+        const query = {
+            type: 'nameSearch',
+            filter: {
+                name: $('#nameInput').val()
+            },
+            projectionFilters: {
+                name: filter.name,
+                weight: filter.weight
+            }
+        }
+
+        const res = await axios.post('http://localhost:3000/search', query)
+
+        $("#searchResults").empty();
+        $("#searchResults").html(JSON.stringify(res.data));
     });
-  
-    // Search by unicorn favorite food
-    $('#foodSearchButton').click(function() {
-      var appleChecked = $('#appleCheckbox').is(':checked');
-      var carrotChecked = $('#carrotCheckbox').is(':checked');
-      var foodList = [];
-      if (appleChecked) {
-        foodList.push('apple');
-      }
-      if (carrotChecked) {
-        foodList.push('carrot');
-      }
-      var query = { favoriteFood: { $in: foodList } };
-      axios.post('http://localhost:3000/search', query)
-        .then(function(response) {
-          displaySearchResults(response.data);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+
+    $('#weightSearchButton').click(async () => {
+        const query = {
+            type: 'weightSearch',
+            filter: {
+                weight: {
+                    $gte: parseInt($('#lowerLimitInput').val()),
+                    $lte: parseInt($('#higherLimitInput').val())
+                }
+            },
+            projectionFilters: {
+                name: filter.name,
+                weight: filter.weight
+            }
+        }
+
+        const res = await axios.post('http://localhost:3000/search', query)
+
+        $("#searchResults").empty();
+        $("#searchResults").html(JSON.stringify(res.data));
     });
-  
-    // Filter by unicorn name and/or weight
-    $('#filterButton').click(function() {
-      var nameChecked = $('#nameFilterCheckbox').is(':checked');
-      var weightChecked = $('#weightFilterCheckbox').is(':checked');
-      var filter = {};
-      if (nameChecked) {
-        filter.name = 1;
-      }
-      if (weightChecked) {
-        filter.weight = 1;
-      }
-      var projection = { _id: 0, ...filter };
-      axios.post('http://localhost:3000/filter', projection)
-        .then(function(response) {
-          displaySearchResults(response.data);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+
+    $('#foodSearchButton').click(async () => {
+        const foodList = [];
+        if ($('#appleCheckbox').is(':checked')) {
+            foodList.push('apple');
+        }
+        if ($('#carrotCheckbox').is(':checked')) {
+            foodList.push('carrot');
+        }
+        const query = {
+            type: 'foodSearch',
+            filter: {
+                food: {
+                    $in: foodList
+                }
+            },
+            projectionFilters: {
+                name: filter.name,
+                weight: filter.weight,
+                loves: true
+            }
+        }
+        const res = await axios.post('http://localhost:3000/search', query)
+        $("#searchResults").empty();
+        $("#searchResults").html(JSON.stringify(res.data));
     });
-  
-    // Display search results
-    function displaySearchResults(results) {
-      var html = '';
-      if (results.length > 0) {
-        results.forEach(function(result) {
-          html += '<div>';
-          html += '<h3>' + result.name + '</h3>';
-          html += '<p>Weight: ' + result.weight + '</p>';
-          html += '<p>Favorite food: ' + result.favoriteFood.join(', ') + '</p>';
-          html += '</div>';
-        });
-      } else {
-        html += '<p>No results found</p>';
-      }
-      $('#searchResults').html(html);
-    }
-  });
-  
+
+
+};
+
+$(document).ready(setup);
